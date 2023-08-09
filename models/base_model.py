@@ -60,9 +60,9 @@ class BaseModel:
         """
         data_dict = self.__dict__.copy()
         update_dict = {
-                        "__class__":str(self.__class__.__name__),
-                        "created_at":self.created_at.isoformat(),
-                        "updated_at":self.updated_at.isoformat()
+                        "__class__":  str(self.__class__.__name__),
+                        "created_at": self.created_at.isoformat(),
+                        "updated_at": self.updated_at.isoformat()
                       }
         data_dict.update(update_dict)
         return data_dict
