@@ -1,2 +1,4 @@
 utils
-
+__pycache__
+test*model*.py
+file.json
