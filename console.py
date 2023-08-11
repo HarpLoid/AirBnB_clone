@@ -152,9 +152,7 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
-        print(line)
         args = shlex.split(line)
-        print(args)
         if len(args) >= 4:
             key = f"{args[0]}.{args[1]}"
             if hasattr(self.__class_dict[args[0]], args[2]):
@@ -163,8 +161,11 @@ class HBNBCommand(cmd.Cmd):
                 attrib_value = cast(args[3])
             else:
                 attrib_value = args[3]
-            setattr(storage.all()[key], args[2], attrib_value)
-            storage.all()[key].save()
+            try:
+                setattr(storage.all()[key], args[2], attrib_value)
+                storage.all()[key].save()
+            except KeyError:
+                print(self.error_msg["4"])
         elif len(args) == 0:
             print(self.error_msg["1"])
         elif args[0] not in self.__class_dict:
@@ -180,7 +181,6 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         args = self.parse(line)
-        print(args)
         if len(args) == 1:
             print(f"*** Unknown syntax {line}")
             return
@@ -190,13 +190,13 @@ class HBNBCommand(cmd.Cmd):
             elif args['command'] == 'count':
                 HBNBCommand.do_count(self, args['class_name'])
             elif args['command'] == 'show':
-                arg = args['class_name'] + ' ' + args['id_val']
+                arg = f"{args['class_name']} {args['id_val']}"
                 HBNBCommand.do_show(self, arg)
             elif args['command'] == 'destroy':
-                arg = args['class_name'] + ' ' + args['id_val']
+                arg = f"{args['class_name']} {args['id_val']}"
                 HBNBCommand.do_destroy(self, arg)
             elif args['command'] == 'update':
-                arg = args['class_name'] + ' ' + args['id_val'] + ' ' + args['attrib_name'] + ' ' + args['attrib_val']
+                arg = f"{args['class_name']} {args['id_val']} {args['attrib_name']} {args['attrib_val']}"
                 HBNBCommand.do_update(self, arg)
             else:
                 print(f"*** Unknown syntax {line}")

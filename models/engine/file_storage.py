@@ -22,7 +22,7 @@ class FileStorage:
     """
     __file_path = "file.json"
     __objects = {}
-    class_dict = {
+    __class_dict = {
                     "BaseModel": BaseModel,
                     "User": User,
                     "Place": Place,
@@ -70,7 +70,7 @@ class FileStorage:
             with open(self.__file_path, "r", encoding='utf8') as file:
                 reload_data = json.load(file)
             for key, obj in reload_data.items():
-                self.__objects.update({key: (self.class_dict
+                self.__objects.update({key: (self.__class_dict
                                       [obj["__class__"]](**obj))})
         except FileNotFoundError:
             pass
