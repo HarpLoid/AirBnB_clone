@@ -178,6 +178,7 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         args = self.parse(line)
+        print(args)
         if len(args) == 1:
             print(f"*** Unknown syntax {line}")
             return
@@ -283,9 +284,9 @@ class HBNBCommand(cmd.Cmd):
     @staticmethod
     def parse(line):
         args_dict = {}
-        pattern = r'^(.*?)\.([^(]+)\(([^)]+)(?:,\s*({.*?}))?\
-                    (?:,\s*([^,]+),\s*([^)]+))?\)$'
+        pattern = r'^(.*?)\.([^(]+)\((\s*|[^,]+)(?:\,\s*({.*?}))?(?:\,\s*([^,]+)\,\s*([^)]+))?\)$'
         match = re.match(pattern, line)
+        print(match)
 
         if match:
             args_dict['class_name'] = match.group(1)
@@ -294,6 +295,8 @@ class HBNBCommand(cmd.Cmd):
             args_dict['dict_rep'] = match.group(4)
             args_dict['attrib_name'] = match.group(5)
             args_dict['attrib_val'] = match.group(6)
+            
+        print(args_dict)
 
         return args_dict
 
