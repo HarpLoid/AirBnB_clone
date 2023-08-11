@@ -31,7 +31,7 @@ class HBNBCommand(cmd.Cmd):
         "5": '** attribute name missing **',
         "6": '** value missing **'
     }
-    class_dict = {
+    __class_dict = {
         "BaseModel": BaseModel,
         "User": User,
         "Place": Place,
@@ -70,10 +70,10 @@ class HBNBCommand(cmd.Cmd):
         """
         if len(line) == 0:
             print(self.error_msg["1"])
-        elif line not in self.class_dict:
+        elif line not in self.__class_dict:
             print(self.error_msg["2"])
         else:
-            instance = self.class_dict[line]()
+            instance = self.__class_dict[line]()
             instance.save()
             print(instance.id)
 
@@ -87,7 +87,7 @@ class HBNBCommand(cmd.Cmd):
         args = line.split()
         if len(args) == 0:
             print(self.error_msg["1"])
-        elif args[0] not in self.class_dict:
+        elif args[0] not in self.__class_dict:
             print(self.error_msg["2"])
         elif len(args) == 1:
             print(self.error_msg["3"])
@@ -105,7 +105,7 @@ class HBNBCommand(cmd.Cmd):
         args = line.split()
         if len(args) == 0:
             print(self.error_msg["1"])
-        elif args[0] not in self.class_dict:
+        elif args[0] not in self.__class_dict:
             print(self.error_msg["2"])
         elif len(args) == 1:
             print(self.error_msg["3"])
@@ -121,7 +121,7 @@ class HBNBCommand(cmd.Cmd):
         <class name>.count()
         Returns the number of instances of a class.
         """
-        if line in self.class_dict:
+        if line in self.__class_dict:
             count = 0
 
             for key in storage.all():
@@ -139,7 +139,7 @@ class HBNBCommand(cmd.Cmd):
         if len(line) == 0:
             for obj in storage.all().values():
                 print(str(obj))
-        elif line in self.class_dict:
+        elif line in self.__class_dict:
             for key, obj in storage.all().items():
                 if line in key:
                     print(str(obj))
@@ -157,8 +157,8 @@ class HBNBCommand(cmd.Cmd):
         print(args)
         if len(args) >= 4:
             key = f"{args[0]}.{args[1]}"
-            if hasattr(self.class_dict[args[0]], args[2]):
-                cast = type(getattr(self.class_dict[args[0]], args[2]))
+            if hasattr(self.__class_dict[args[0]], args[2]):
+                cast = type(getattr(self.__class_dict[args[0]], args[2]))
                 print(cast)
                 attrib_value = cast(args[3])
             else:
@@ -167,7 +167,7 @@ class HBNBCommand(cmd.Cmd):
             storage.all()[key].save()
         elif len(args) == 0:
             print(self.error_msg["1"])
-        elif args[0] not in self.class_dict:
+        elif args[0] not in self.__class_dict:
             print(self.error_msg["2"])
         elif len(args) == 1:
             print(self.error_msg["3"])
@@ -244,31 +244,31 @@ class HBNBCommand(cmd.Cmd):
         """
         completes args for update command
         """
-        return self.completion(self.class_dict.keys(), text)
+        return self.completion(self.__class_dict.keys(), text)
 
     def complete_show(self, text, line, begidx, endidx):
         """
         completes args for show command
         """
-        return self.completion(self.class_dict.keys(), text)
+        return self.completion(self.__class_dict.keys(), text)
 
     def complete_destroy(self, text, line, begidx, endidx):
         """
         completes args for destroy command
         """
-        return self.completion(self.class_dict.keys(), text)
+        return self.completion(self.__class_dict.keys(), text)
 
     def complete_create(self, text, line, begidx, endidx):
         """
         completes args for create command
         """
-        return self.completion(self.class_dict.keys(), text)
+        return self.completion(self.__class_dict.keys(), text)
 
     def complete_all(self, text, line, begidx, endidx):
         """
         completes args for all command
         """
-        return self.completion(self.class_dict.keys(), text)
+        return self.completion(self.__class_dict.keys(), text)
 
     @staticmethod
     def completion(iterable, text):
