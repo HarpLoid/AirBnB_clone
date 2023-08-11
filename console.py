@@ -5,6 +5,7 @@ Module - console
 Entry point of the
 command interpreter
 """
+import re
 import cmd
 import shlex
 from models import storage
@@ -114,6 +115,9 @@ class HBNBCommand(cmd.Cmd):
             key = f"{args[0]}.{args[1]}"
             del storage.all()[key]
             storage.save()
+
+    def do_count(self, line):
+        pass
 
     def do_all(self, line):
         """
@@ -237,7 +241,23 @@ class HBNBCommand(cmd.Cmd):
             completions = [ i for i in iterable
                             if i.startswith(text)]
         return completions
-
+    
+    @staticmethod
+    def parse(line):
+        args_dict = {}
+        pattern = r'^(.*?)\.([^(]+)\(([^)]+)(?:,\s*({.*?}))?\
+                    (?:,\s*([^,]+),\s*([^)]+))?\)$'
+        match = re.match(pattern, line)
+        
+        if match:
+            args_dict['class_name'] = match.group(1)
+            args_dict['command'] = match.group(2)
+            args_dict['id_val'] = match.group(3)
+            args_dict['dict_rep'] = match.group(4)
+            args_dict['attrib_name'] = match.group(5)
+            args_dict['attrib_val'] = match.group(6)
+        
+        return args_dict
 
 
 
