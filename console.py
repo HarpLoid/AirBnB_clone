@@ -213,12 +213,12 @@ class HBNBCommand(cmd.Cmd):
                          'Returns the number of instances of a class.']))
 
     def help_destroy(self):
-        print('\n'.join(['(hbnb) destroy <class name> <id>',
+        print('\n'.join(['(hbnb) <class name>.destroy(<id>)',
                          'Deletes an instance based on the class name and id',
                          'then saves the changes into the JSON file']))
 
     def help_all(self):
-        print('\n'.join(['(hbnb) all <class name> or (hbnb) all',
+        print('\n'.join(['(hbnb) <class name>.all() or (hbnb) all',
                          'Prints all string representation',
                          'of all instances based or not on the class name.']))
 
@@ -228,12 +228,12 @@ class HBNBCommand(cmd.Cmd):
                          'saves it and  prints the id']))
 
     def help_show(self):
-        print('\n'.join(['(hbnb) show <class name> <id>',
+        print('\n'.join(['(hbnb) <class name>.show(<id>)',
                          'Prints the string representation',
                          'of an instance based on class name and id']))
 
     def help_update(self):
-        print('\n'.join(['(hbnb) update <class name> <id> <attribute name> "<attribute value>"',
+        print('\n'.join(['(hbnb) <class name>.update(<id> <attribute name> <attribute value>)',
                          'Updates an instance based on the class name and id',
                          'by adding or updating attribute and saves',
                          'the changes into the JSON file.']))
