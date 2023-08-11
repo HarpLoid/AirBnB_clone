@@ -6,9 +6,15 @@ Entry point of the
 command interpreter
 """
 import cmd
+import shlex
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
+from models.city import City
+from models.place import Place
+from models.state import State
+from models.review import Review
+from models.amenity import Amenity
 
 
 class HBNBCommand(cmd.Cmd):
@@ -26,7 +32,12 @@ class HBNBCommand(cmd.Cmd):
                 }
     class_dict = {
                     "BaseModel": BaseModel,
-                    "User": User
+                    "User": User,
+                    "Place": Place,
+                    "City": City,
+                    "State": State,
+                    "Review": Review,
+                    "Amenity": Amenity
                  }
 
     def do_EOF(self, line):
@@ -125,11 +136,15 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
-        args = line.split()
+        args = shlex.split(line)
         if len(args) >= 4:
             key = f"{args[0]}.{args[1]}"
-            cast = type(args[3])
-            attrib_value = cast(args[3])
+            if hasattr(self.class_dict[args[0]], args[2]):
+                cast = type(getattr(self.class_dict[args[0]], args[2]))
+                print(cast)
+                attrib_value = cast(args[3])
+            else:
+                attrib_value = args[3]
             setattr(storage.all()[key], args[2], attrib_value)
             storage.all()[key].save()
         elif len(args) == 0:
@@ -144,6 +159,9 @@ class HBNBCommand(cmd.Cmd):
             print(self.error_msg["5"])
         else:
             print(self.error_msg["6"])
+            
+    def default(self, line):
+        pass
 
     def help_quit(self):
         """

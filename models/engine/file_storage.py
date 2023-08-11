@@ -8,6 +8,11 @@ and deserializes JSON file to instances
 import json
 from models.base_model import BaseModel
 from models.user import User
+from models.city import City
+from models.place import Place
+from models.state import State
+from models.review import Review
+from models.amenity import Amenity
 
 
 class FileStorage:
@@ -19,7 +24,12 @@ class FileStorage:
     __objects = {}
     class_dict = {
                     "BaseModel": BaseModel,
-                    "User": User
+                    "User": User,
+                    "Place": Place,
+                    "City": City,
+                    "State": State,
+                    "Review": Review,
+                    "Amenity": Amenity
                  }
 
     def all(self):
