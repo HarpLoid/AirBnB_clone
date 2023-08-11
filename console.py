@@ -152,7 +152,9 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
+        print(line)
         args = shlex.split(line)
+        print(args)
         if len(args) >= 4:
             key = f"{args[0]}.{args[1]}"
             if hasattr(self.class_dict[args[0]], args[2]):
@@ -189,14 +191,13 @@ class HBNBCommand(cmd.Cmd):
                 HBNBCommand.do_count(self, args['class_name'])
             elif args['command'] == 'show':
                 arg = args['class_name'] + ' ' + args['id_val']
-                HBNBCommand.do_count(self, arg)
+                HBNBCommand.do_show(self, arg)
             elif args['command'] == 'destroy':
                 arg = args['class_name'] + ' ' + args['id_val']
-                HBNBCommand.do_count(self, arg)
+                HBNBCommand.do_destroy(self, arg)
             elif args['command'] == 'update':
-                arg = args['class_name'] + ' ' + args['id_value'] + ' '\
-                    + args['attrib_name'] + ' ' + args['attrib_val']
-                HBNBCommand.do_count(self, arg)
+                arg = args['class_name'] + ' ' + args['id_val'] + ' ' + args['attrib_name'] + ' ' + args['attrib_val']
+                HBNBCommand.do_update(self, arg)
             else:
                 print(f"*** Unknown syntax {line}")
         except IndexError:
@@ -284,9 +285,8 @@ class HBNBCommand(cmd.Cmd):
     @staticmethod
     def parse(line):
         args_dict = {}
-        pattern = r'^(.*?)\.([^(]+)\((\s*|[^,]+)(?:\,\s*({.*?}))?(?:\,\s*([^,]+)\,\s*([^)]+))?\)$'
+        pattern = r'^(.*?)\.([^(]+)\((\s*|[^,]+)(?:,\s*({.*?}))?(?:,\s*([^,]+),\s*([^)]+))?\)$'
         match = re.match(pattern, line)
-        print(match)
 
         if match:
             args_dict['class_name'] = match.group(1)
@@ -295,8 +295,6 @@ class HBNBCommand(cmd.Cmd):
             args_dict['dict_rep'] = match.group(4)
             args_dict['attrib_name'] = match.group(5)
             args_dict['attrib_val'] = match.group(6)
-            
-        print(args_dict)
 
         return args_dict
 
