@@ -9,37 +9,37 @@ import re
 import cmd
 import shlex
 from models import storage
-from models.base_model import BaseModel
 from models.user import User
 from models.city import City
 from models.place import Place
 from models.state import State
 from models.review import Review
 from models.amenity import Amenity
+from models.base_model import BaseModel
 
 
 class HBNBCommand(cmd.Cmd):
     """
     command interpreter class
     """
-    prompt     = "(hbnb) "
+    prompt = "(hbnb) "
     error_msg = {
-                    "1": '** class name missing **',
-                    "2": '** class doesn\'t exist **',
-                    "3": '** instance id missing **',
-                    "4": '** no instance found **',
-                    "5": '** attribute name missing **',
-                    "6": '** value missing **'
-                }
+        "1": '** class name missing **',
+        "2": '** class doesn\'t exist **',
+        "3": '** instance id missing **',
+        "4": '** no instance found **',
+        "5": '** attribute name missing **',
+        "6": '** value missing **'
+    }
     class_dict = {
-                    "BaseModel": BaseModel,
-                    "User": User,
-                    "Place": Place,
-                    "City": City,
-                    "State": State,
-                    "Review": Review,
-                    "Amenity": Amenity
-                 }
+        "BaseModel": BaseModel,
+        "User": User,
+        "Place": Place,
+        "City": City,
+        "State": State,
+        "Review": Review,
+        "Amenity": Amenity
+    }
 
     def do_EOF(self, line):
         """
@@ -117,7 +117,19 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
 
     def do_count(self, line):
-        pass
+        """
+        <class name>.count()
+        Returns the number of instances of a class.
+        """
+        if line in self.class_dict:
+            count = 0
+
+            for key in storage.all():
+                if line in key:
+                    count += 1
+            print(count)
+        else:
+            print(self.error_msg["1"])
 
     def do_all(self, line):
         """
@@ -163,9 +175,31 @@ class HBNBCommand(cmd.Cmd):
             print(self.error_msg["5"])
         else:
             print(self.error_msg["6"])
-            
+
     def default(self, line):
-        pass
+        args = self.parse(line)
+        if len(args) == 1:
+            print(f"*** Unknown syntax {line}")
+            return
+        try:
+            if args['command'] == 'all':
+                HBNBCommand.do_all(self, args['class_name'])
+            elif args['command'] == 'count':
+                HBNBCommand.do_count(self, args['class_name'])
+            elif args['command'] == 'show':
+                arg = args['class_name'] + ' ' + args['id_val']
+                HBNBCommand.do_count(self, arg)
+            elif args['command'] == 'destroy':
+                arg = args['class_name'] + ' ' + args['id_val']
+                HBNBCommand.do_count(self, arg)
+            elif args['command'] == 'update':
+                arg = args['class_name'] + ' ' + args['id_value'] + ' '\
+                    + args['attrib_name'] + ' ' + args['attrib_val']
+                HBNBCommand.do_count(self, arg)
+            else:
+                print(f"*** Unknown syntax {line}")
+        except IndexError:
+            print(f"*** Unknown syntax {line}")
 
     def help_quit(self):
         """
@@ -173,6 +207,10 @@ class HBNBCommand(cmd.Cmd):
         """
         print('\n'.join(['(hbnb) quit',
                          'Exits program with "quit"']))
+
+    def help_count(self):
+        print('\n'.join(['(hbnb) <class name>.count()',
+                         'Returns the number of instances of a class.']))
 
     def help_destroy(self):
         print('\n'.join(['(hbnb) destroy <class name> <id>',
@@ -238,17 +276,17 @@ class HBNBCommand(cmd.Cmd):
         if not text:
             completions = list(iterable)
         else:
-            completions = [ i for i in iterable
-                            if i.startswith(text)]
+            completions = [i for i in iterable
+                           if i.startswith(text)]
         return completions
-    
+
     @staticmethod
     def parse(line):
         args_dict = {}
         pattern = r'^(.*?)\.([^(]+)\(([^)]+)(?:,\s*({.*?}))?\
                     (?:,\s*([^,]+),\s*([^)]+))?\)$'
         match = re.match(pattern, line)
-        
+
         if match:
             args_dict['class_name'] = match.group(1)
             args_dict['command'] = match.group(2)
@@ -256,9 +294,8 @@ class HBNBCommand(cmd.Cmd):
             args_dict['dict_rep'] = match.group(4)
             args_dict['attrib_name'] = match.group(5)
             args_dict['attrib_val'] = match.group(6)
-        
-        return args_dict
 
+        return args_dict
 
 
 if __name__ == "__main__":
