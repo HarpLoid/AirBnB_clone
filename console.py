@@ -153,7 +153,6 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
-        print("do_update b4 split:", line, type(line))
         args = []
         pattern = r'(.*)(\{[^\}]*\})'
         match = re.match(pattern, line)
@@ -168,13 +167,10 @@ class HBNBCommand(cmd.Cmd):
         else:
             args = shlex.split(line)
 
-        print("do_update:", args)
         key = f"{args[0]}.{args[1]}"
 
         if len(args) >= 4:
-            print('here')
             if hasattr(self.__class_dict[args[0]], args[2]):
-                print('here')
                 cast = type(getattr(self.__class_dict[args[0]], args[2]))
                 attrib_value = cast(args[3])
                 try:
@@ -197,13 +193,9 @@ class HBNBCommand(cmd.Cmd):
             print(self.error_msg["5"])
         else:
             if isinstance(args[2], dict):
-                print("matched", type(args[2]))
-                print(storage.all()[key], type(storage.all()[key]))
-                #self.__class_dict[args[0]](**args[2])
                 add_dict = args[2]
-                for k, v in add_dict.items():
+                for k, v in add_dict.items(): # type: ignore
                     if hasattr(self.__class_dict[args[0]], k):
-                        print('here')
                         cast = type(getattr(self.__class_dict[args[0]], k))
                         attrib_value = cast(v)
                         try:
