@@ -7,6 +7,7 @@ command interpreter
 """
 import re
 import cmd
+import json
 import shlex
 from models import storage
 from models.user import User
@@ -152,35 +153,70 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
-        args = shlex.split(line)
-        if len(args) >= 4:
-            key = f"{args[0]}.{args[1]}"
-            if hasattr(self.__class_dict[args[0]], args[2]):
-                cast = type(getattr(self.__class_dict[args[0]], args[2]))
-                print(cast)
-                attrib_value = cast(args[3])
-            else:
-                attrib_value = args[3]
+        print("do_update b4 split:", line, type(line))
+        args = []
+        pattern = r'(.*)(\{[^\}]*\})'
+        match = re.match(pattern, line)
+        if match:
+            print("matched")
+            args = match.group(1).split()
             try:
-                setattr(storage.all()[key], args[2], attrib_value)
-                storage.all()[key].save()
-            except KeyError:
-                print(self.error_msg["4"])
+                dict_arg = json.loads(match.group(2))
+                args.append(dict_arg)
+            except json.decoder.JSONDecodeError:
+                print("attribute name and value should be in (\"\").")
+        else:
+            args = shlex.split(line)
+
+        print("do_update:", args)
+        key = f"{args[0]}.{args[1]}"
+
+        if len(args) >= 4:
+            print('here')
+            if hasattr(self.__class_dict[args[0]], args[2]):
+                print('here')
+                cast = type(getattr(self.__class_dict[args[0]], args[2]))
+                attrib_value = cast(args[3])
+                try:
+                    setattr(storage.all()[key], args[2], attrib_value)
+                    storage.all()[key].save()
+                except KeyError:
+                    print(self.error_msg["4"])
+            else:
+                print("attribute doesn't exist")
+
         elif len(args) == 0:
             print(self.error_msg["1"])
         elif args[0] not in self.__class_dict:
             print(self.error_msg["2"])
         elif len(args) == 1:
             print(self.error_msg["3"])
-        elif (f"{args[0]}.{args[1]}") not in storage.all():
+        elif key not in storage.all():
             print(self.error_msg["4"])
         elif len(args) == 2:
             print(self.error_msg["5"])
         else:
-            print(self.error_msg["6"])
+            if isinstance(args[2], dict):
+                print("matched", type(args[2]))
+                print(storage.all()[key], type(storage.all()[key]))
+                #self.__class_dict[args[0]](**args[2])
+                add_dict = args[2]
+                for k, v in add_dict.items():
+                    if hasattr(self.__class_dict[args[0]], k):
+                        print('here')
+                        cast = type(getattr(self.__class_dict[args[0]], k))
+                        attrib_value = cast(v)
+                        try:
+                            setattr(storage.all()[key], k, attrib_value)
+                            storage.all()[key].save()
+                        except KeyError:
+                            print(self.error_msg["4"])
+            else:
+                print(self.error_msg["6"])
 
     def default(self, line):
         args = self.parse(line)
+        print("default", args)
         if len(args) == 1:
             print(f"*** Unknown syntax {line}")
             return
@@ -196,7 +232,12 @@ class HBNBCommand(cmd.Cmd):
                 arg = f"{args['class_name']} {args['id_val']}"
                 HBNBCommand.do_destroy(self, arg)
             elif args['command'] == 'update':
-                arg = f"{args['class_name']} {args['id_val']} {args['attrib_name']} {args['attrib_val']}"
+                print(args['attrib_name'], type(args['attrib_name']))
+                if args['dict_rep']:
+                    print(args['dict_rep'])
+                    arg = f"{args['class_name']} {args['id_val']} {args['dict_rep']}"
+                else:
+                    arg = f"{args['class_name']} {args['id_val']} {args['attrib_name']} {args['attrib_val']}"
                 HBNBCommand.do_update(self, arg)
             else:
                 print(f"*** Unknown syntax {line}")
@@ -285,19 +326,30 @@ class HBNBCommand(cmd.Cmd):
     @staticmethod
     def parse(line):
         args_dict = {}
-        pattern = r'^(.*?)\.([^(]+)\((\s*|[^,]+)(?:,\s*({.*?}))?(?:,\s*([^,]+),\s*([^)]+))?\)$'
+        pattern = r'^(.*?)\.([^(]+)\((\s*|[^,]+)(?:,\s*({.*?}))?(?:,\s*([^,]+))?(?:,\s*([^)]+))?\)$'
         match = re.match(pattern, line)
 
         if match:
             args_dict['class_name'] = match.group(1)
             args_dict['command'] = match.group(2)
-            args_dict['id_val'] = match.group(3)
-            args_dict['dict_rep'] = match.group(4)
-            args_dict['attrib_name'] = match.group(5)
-            args_dict['attrib_val'] = match.group(6)
-
+            if match.group(3) is not None:
+                args_dict['id_val'] = match.group(3)
+            else:
+                args_dict['id_val'] = ""
+            if match.group(4) is not None:
+                args_dict['dict_rep'] = match.group(4)
+            else:
+                args_dict['dict_rep'] = ""
+            if match.group(5) is not None:
+                args_dict['attrib_name'] = match.group(5)
+            else:
+                args_dict['attrib_name'] = ""
+            if match.group(6) is not None:
+                args_dict['attrib_val'] = match.group(6)
+            else:
+                args_dict['attrib_val'] = ""
+        print("parse:", args_dict)
         return args_dict
-
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
