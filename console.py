@@ -208,7 +208,6 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         args = self.parse(line)
-        print("default", args)
         if len(args) == 1:
             print(f"*** Unknown syntax {line}")
             return
@@ -226,7 +225,6 @@ class HBNBCommand(cmd.Cmd):
             elif args['command'] == 'update':
                 print(args['attrib_name'], type(args['attrib_name']))
                 if args['dict_rep']:
-                    print(args['dict_rep'])
                     arg = f"{args['class_name']} {args['id_val']} {args['dict_rep']}"
                 else:
                     arg = f"{args['class_name']} {args['id_val']} {args['attrib_name']} {args['attrib_val']}"
@@ -340,7 +338,6 @@ class HBNBCommand(cmd.Cmd):
                 args_dict['attrib_val'] = match.group(6)
             else:
                 args_dict['attrib_val'] = ""
-        print("parse:", args_dict)
         return args_dict
 
 if __name__ == "__main__":
