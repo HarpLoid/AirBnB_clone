@@ -157,7 +157,6 @@ class HBNBCommand(cmd.Cmd):
         pattern = r'(.*)(\{[^\}]*\})'
         match = re.match(pattern, line)
         if match:
-            print("matched")
             args = match.group(1).split()
             try:
                 dict_arg = json.loads(match.group(2))
@@ -223,7 +222,6 @@ class HBNBCommand(cmd.Cmd):
                 arg = f"{args['class_name']} {args['id_val']}"
                 HBNBCommand.do_destroy(self, arg)
             elif args['command'] == 'update':
-                print(args['attrib_name'], type(args['attrib_name']))
                 if args['dict_rep']:
                     arg = f"{args['class_name']} {args['id_val']} {args['dict_rep']}"
                 else:
