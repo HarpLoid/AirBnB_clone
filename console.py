@@ -163,6 +163,7 @@ class HBNBCommand(cmd.Cmd):
                 args.append(dict_arg)
             except json.decoder.JSONDecodeError:
                 print("attribute name and value should be in (\"\").")
+                args.append("")
         else:
             args = shlex.split(line)
 
@@ -202,6 +203,8 @@ class HBNBCommand(cmd.Cmd):
                             storage.all()[key].save()
                         except KeyError:
                             print(self.error_msg["4"])
+                    else:
+                        print(f"{k} attribute doesn't exist in class {args[0]}")
             else:
                 print(self.error_msg["6"])
 
