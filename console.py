@@ -181,7 +181,8 @@ class HBNBCommand(cmd.Cmd):
                 except KeyError:
                     print(self.error_msg["4"])
             else:
-                print("attribute doesn't exist")
+                setattr(storage.all()[key], args[2], args[3])
+                storage.all()[key].save()
 
         elif len(args) == 0:
             print(self.error_msg["1"])
