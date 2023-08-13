@@ -21,6 +21,9 @@ class TestFileStorage(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.storage = FileStorage()
+        cls.base = BaseModel()
+        key = "{}.{}".format(type(cls.base).__name__, cls.base.id)
         cls.rev1 = Review()
         cls.rev1.place_id = "Raleigh"
         cls.rev1.user_id = "Greg"
@@ -29,6 +32,8 @@ class TestFileStorage(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         del cls.rev1
+        del cls.storage
+        del cls.base
 
     def tearDown(self):
         try:
@@ -68,10 +73,11 @@ class TestFileStorage(unittest.TestCase):
         self.assertIsNotNone(instances_dic[key])
 
     def test_save(self):
-        """
-        Test method: save (saves the dictionary from new into a json file)
-        """
-        pass
+        """Test save method."""
+        self.storage.save()
+        with open("file.json", "r", encoding="utf-8") as f:
+            save_text = f.read()
+            self.assertIn("BaseModel." + self.base.id, save_text)
 
     def test_reload(self):
         """

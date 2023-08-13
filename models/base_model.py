@@ -14,7 +14,7 @@ class BaseModel:
     """
     Base class that defines all
     common attributes and methods
-    for other classe
+    for other classes
     """
 
     def __init__(self, *args, **kwargs):

@@ -156,25 +156,30 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
+        print("line",line)
         args = []
         pattern = r'(.*)(\{[^\}]*\})'
         match = re.match(pattern, line)
         if match:
             args = match.group(1).split()
+            class_name = args[0]
+            class_id = args[1].strip('"')
+            key = f"{class_name}.{class_id}"
             try:
                 dict_arg = json.loads(match.group(2))
                 args.append(dict_arg)
             except json.decoder.JSONDecodeError:
-                print("attribute name and value should be in (\"\").")
                 args.append("")
         else:
             args = shlex.split(line)
+            class_name = args[0]
+            class_id = args[1].strip('"')
+            key = f"{class_name}.{class_id}"
 
         if len(args) >= 4:
-            key = f"{args[0]}.{args[1]}"
-            if args[0] in self.__class_dict:
-                if hasattr(self.__class_dict[args[0]], args[2]):
-                    cast = type(getattr(self.__class_dict[args[0]], args[2]))
+            if class_name in self.__class_dict:
+                if hasattr(self.__class_dict[class_name], args[2]):
+                    cast = type(getattr(self.__class_dict[class_name], args[2]))
                     attrib_value = cast(args[3])
                     try:
                         setattr(storage.all()[key], args[2], attrib_value)
@@ -196,17 +201,16 @@ class HBNBCommand(cmd.Cmd):
             print(self.error_msg["2"])
         elif len(args) == 1:
             print(self.error_msg["3"])
-        elif f"{args[0]}.{args[1]}" not in storage.all():
+        elif f"{class_name}.{class_id}" not in storage.all():
             print(self.error_msg["4"])
         elif len(args) == 2:
             print(self.error_msg["5"])
         else:
             if isinstance(args[2], dict):
-                key = f"{args[0]}.{args[1]}"
                 add_dict = args[2]
                 for k, v in add_dict.items():
-                    if hasattr(self.__class_dict[args[0]], k):
-                        cast = type(getattr(self.__class_dict[args[0]], k))
+                    if hasattr(self.__class_dict[class_name], k):
+                        cast = type(getattr(self.__class_dict[class_name], k))
                         attrib_value = cast(v)
                         try:
                             setattr(storage.all()[key], k, attrib_value)
@@ -214,8 +218,11 @@ class HBNBCommand(cmd.Cmd):
                         except KeyError:
                             print(self.error_msg["4"])
                     else:
-                        print(f"""{k} attribute doesn't
-                              exist in class {args[0]}""")
+                        try:
+                            setattr(storage.all()[key], k, v)
+                            storage.all()[key].save()
+                        except KeyError:
+                            print(self.error_msg["4"])
             else:
                 print(self.error_msg["6"])
 
@@ -236,11 +243,14 @@ class HBNBCommand(cmd.Cmd):
                 HBNBCommand.do_destroy(self, arg)
             elif args['command'] == 'update':
                 if args['dict_rep']:
-                    arg = f"{args['class_name']} {args['id_val']}\
-                            {args['dict_rep']}"
+                    arg = "{} {} {}".format(args['class_name'],
+                                            args['id_val'],
+                                            args['dict_rep'])
                 else:
-                    arg = f"{args['class_name']} {args['id_val']}\
-                            {args['attrib_name']} {args['attrib_val']}"
+                    arg = "{} {} {} {}".format(args['class_name'],
+                                               args['id_val'],
+                                               args['attrib_name'],
+                                               args['attrib_val'])
                 HBNBCommand.do_update(self, arg)
             else:
                 print(f"*** Unknown syntax {line}")
