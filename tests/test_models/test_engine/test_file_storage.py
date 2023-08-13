@@ -33,7 +33,7 @@ class TestFileStorage(unittest.TestCase):
     def tearDown(self):
         try:
             os.remove("file.json")
-        except:
+        except FileNotFoundError:
             pass
 
     def test_style_check(self):
@@ -52,7 +52,7 @@ class TestFileStorage(unittest.TestCase):
         instances_dic = storage.all()
         self.assertIsNotNone(instances_dic)
         self.assertEqual(type(instances_dic), dict)
-        self.assertIs(instances_dic, storage.__objects)
+        self.assertEqual(instances_dic, storage._FileStorage__objects)
 
     def test_new(self):
         """
@@ -64,7 +64,7 @@ class TestFileStorage(unittest.TestCase):
         melissa.first_name = "Melissa"
         m_storage.new(melissa)
         key = melissa.__class__.__name__ + "." + str(melissa.id)
-        #print(instances_dic[key])
+        # print(instances_dic[key])
         self.assertIsNotNone(instances_dic[key])
 
     def test_save(self):
@@ -80,7 +80,7 @@ class TestFileStorage(unittest.TestCase):
         a_storage = FileStorage()
         try:
             os.remove("file.json")
-        except:
+        except FileNotFoundError:
             pass
         with open("file.json", "w") as f:
             f.write("{}")

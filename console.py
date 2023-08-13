@@ -135,15 +135,18 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """
         Prints all string representation
-        of all instances based or not on the class name. 
+        of all instances based or not on the class name.
         """
+        object_list = []
         if len(line) == 0:
             for obj in storage.all().values():
-                print(str(obj))
+                object_list.append(str(obj))
+            print(object_list)
         elif line in self.__class_dict:
             for key, obj in storage.all().items():
                 if line in key:
-                    print(str(obj))
+                    object_list.append(str(obj))
+            print(object_list)
         else:
             print(self.error_msg["2"])
 
@@ -167,9 +170,8 @@ class HBNBCommand(cmd.Cmd):
         else:
             args = shlex.split(line)
 
-        key = f"{args[0]}.{args[1]}"
-
         if len(args) >= 4:
+            key = f"{args[0]}.{args[1]}"
             if hasattr(self.__class_dict[args[0]], args[2]):
                 cast = type(getattr(self.__class_dict[args[0]], args[2]))
                 attrib_value = cast(args[3])
@@ -187,14 +189,15 @@ class HBNBCommand(cmd.Cmd):
             print(self.error_msg["2"])
         elif len(args) == 1:
             print(self.error_msg["3"])
-        elif key not in storage.all():
+        elif f"{args[0]}.{args[1]}" not in storage.all():
             print(self.error_msg["4"])
         elif len(args) == 2:
             print(self.error_msg["5"])
         else:
             if isinstance(args[2], dict):
+                key = f"{args[0]}.{args[1]}"
                 add_dict = args[2]
-                for k, v in add_dict.items(): # type: ignore
+                for k, v in add_dict.items():
                     if hasattr(self.__class_dict[args[0]], k):
                         cast = type(getattr(self.__class_dict[args[0]], k))
                         attrib_value = cast(v)
@@ -204,13 +207,14 @@ class HBNBCommand(cmd.Cmd):
                         except KeyError:
                             print(self.error_msg["4"])
                     else:
-                        print(f"{k} attribute doesn't exist in class {args[0]}")
+                        print(f"""{k} attribute doesn't
+                              exist in class {args[0]}""")
             else:
                 print(self.error_msg["6"])
 
     def default(self, line):
         args = self.parse(line)
-        if len(args) == 1:
+        if len(args) == 0:
             print(f"*** Unknown syntax {line}")
             return
         try:
@@ -226,9 +230,11 @@ class HBNBCommand(cmd.Cmd):
                 HBNBCommand.do_destroy(self, arg)
             elif args['command'] == 'update':
                 if args['dict_rep']:
-                    arg = f"{args['class_name']} {args['id_val']} {args['dict_rep']}"
+                    arg = f"{args['class_name']} {args['id_val']}\
+                            {args['dict_rep']}"
                 else:
-                    arg = f"{args['class_name']} {args['id_val']} {args['attrib_name']} {args['attrib_val']}"
+                    arg = f"{args['class_name']} {args['id_val']}\
+                            {args['attrib_name']} {args['attrib_val']}"
                 HBNBCommand.do_update(self, arg)
             else:
                 print(f"*** Unknown syntax {line}")
@@ -267,7 +273,8 @@ class HBNBCommand(cmd.Cmd):
                          'of an instance based on class name and id']))
 
     def help_update(self):
-        print('\n'.join(['(hbnb) <class name>.update(<id> <attribute name> <attribute value>)',
+        print('\n'.join(['(hbnb) <class name>.update(<id>\
+                         <attribute name> <attribute value>)',
                          'Updates an instance based on the class name and id',
                          'by adding or updating attribute and saves',
                          'the changes into the JSON file.']))
@@ -317,8 +324,11 @@ class HBNBCommand(cmd.Cmd):
     @staticmethod
     def parse(line):
         args_dict = {}
-        pattern = r'^(.*?)\.([^(]+)\((\s*|[^,]+)(?:,\s*({.*?}))?(?:,\s*([^,]+))?(?:,\s*([^)]+))?\)$'
-        match = re.match(pattern, line)
+        # pattern = r'^(.*?)\.([^(]+)\((\s*|[^,]+)
+        # (?:,\s*({.*?}))?(?:,\s*([^,]+))?(?:,\s*([^)]+))?\)$'
+        pattern = r'''(\w+)\.(\w+)\(([^,]+)?(?:,\s*({.*?}))?
+                    (?:,\s*(\w+),\s*["\']([^"\']+)["\'])?\)'''
+        match = re.match(pattern, line, re.VERBOSE)
 
         if match:
             args_dict['class_name'] = match.group(1)
@@ -339,7 +349,11 @@ class HBNBCommand(cmd.Cmd):
                 args_dict['attrib_val'] = match.group(6)
             else:
                 args_dict['attrib_val'] = ""
-        return args_dict
+
+            return args_dict
+        else:
+            return args_dict
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()

@@ -45,11 +45,11 @@ class TestCity(unittest.TestCase):
         self.assertTrue('updated_at' in self.city_1.__dict__)
         self.assertTrue('name' in self.city_1.__dict__)
         self.assertTrue('state_id' in self.city_1.__dict__)
-    
+
     def test_attributes_are_strings(self):
         self.assertEqual(type(self.city_1.name), str)
         self.assertEqual(type(self.city_1.state_id), str)
-    
+
     def test_save(self):
         self.city_1.save()
         self.assertNotEqual(self.city_1.created_at, self.city_1.updated_at)

@@ -43,13 +43,14 @@ class TestAmenity(unittest.TestCase):
         self.assertTrue('created_at' in self.amenity_1.__dict__)
         self.assertTrue('updated_at' in self.amenity_1.__dict__)
         self.assertTrue('name' in self.amenity_1.__dict__)
-    
+
     def test_attributes_are_strings(self):
         self.assertEqual(type(self.amenity_1.name), str)
-    
+
     def test_save(self):
         self.amenity_1.save()
-        self.assertNotEqual(self.amenity_1.created_at, self.amenity_1.updated_at)
+        self.assertNotEqual(self.amenity_1.created_at,
+                            self.amenity_1.updated_at)
 
     def test_to_dict(self):
         self.assertEqual('to_dict' in dir(self.amenity_1), True)

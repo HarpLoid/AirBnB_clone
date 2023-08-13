@@ -49,13 +49,13 @@ class TestUser(unittest.TestCase):
         self.assertTrue('id' in self.user_1.__dict__)
         self.assertTrue('created_at' in self.user_1.__dict__)
         self.assertTrue('updated_at' in self.user_1.__dict__)
-    
+
     def test_attributes_are_strings(self):
         self.assertEqual(type(self.user_1.email), str)
         self.assertEqual(type(self.user_1.first_name), str)
         self.assertEqual(type(self.user_1.last_name), str)
         self.assertEqual(type(self.user_1.password), str)
-    
+
     def test_save(self):
         self.user_1.save()
         self.assertNotEqual(self.user_1.created_at, self.user_1.updated_at)
