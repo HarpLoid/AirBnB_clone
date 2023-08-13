@@ -215,9 +215,8 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         args = self.parse(line)
-        """ if len(args) == 0:
-            print(f"*** Unknown syntax {line}")
-            return """
+        if len(args) == 0:
+            return False
         try:
             if args['command'] == 'all':
                 HBNBCommand.do_all(self, args['class_name'])
