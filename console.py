@@ -156,7 +156,6 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
-        print("line",line)
         args = []
         pattern = r'(.*)(\{[^\}]*\})'
         match = re.match(pattern, line)
