@@ -172,20 +172,23 @@ class HBNBCommand(cmd.Cmd):
 
         if len(args) >= 4:
             key = f"{args[0]}.{args[1]}"
-            if hasattr(self.__class_dict[args[0]], args[2]):
-                cast = type(getattr(self.__class_dict[args[0]], args[2]))
-                attrib_value = cast(args[3])
-                try:
-                    setattr(storage.all()[key], args[2], attrib_value)
-                    storage.all()[key].save()
-                except KeyError:
-                    print(self.error_msg["4"])
+            if args[0] in self.__class_dict:
+                if hasattr(self.__class_dict[args[0]], args[2]):
+                    cast = type(getattr(self.__class_dict[args[0]], args[2]))
+                    attrib_value = cast(args[3])
+                    try:
+                        setattr(storage.all()[key], args[2], attrib_value)
+                        storage.all()[key].save()
+                    except KeyError:
+                        print(self.error_msg["4"])
+                else:
+                    try:
+                        setattr(storage.all()[key], args[2], args[3])
+                        storage.all()[key].save()
+                    except KeyError:
+                        print(self.error_msg["4"])
             else:
-                try:
-                    setattr(storage.all()[key], args[2], args[3])
-                    storage.all()[key].save()
-                except KeyError:
-                    print(self.error_msg["4"])
+                print(self.error_msg["2"])
 
         elif len(args) == 0:
             print(self.error_msg["1"])
@@ -219,7 +222,7 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line):
         args = self.parse(line)
         if len(args) == 0:
-            return False
+            print(f"*** Unknown syntax {line}")
         try:
             if args['command'] == 'all':
                 HBNBCommand.do_all(self, args['class_name'])
