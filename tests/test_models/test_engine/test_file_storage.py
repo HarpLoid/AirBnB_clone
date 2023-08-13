@@ -88,3 +88,15 @@ class TestFileStorage(unittest.TestCase):
             for line in r:
                 self.assertEqual(line, "{}")
         self.assertIs(a_storage.reload(), None)
+
+    def test_allMethods(self):
+        """
+        Test method: all methods.
+        """
+        new_instance = BaseModel()
+        fileStore = FileStorage()
+        fileStore.new(new_instance)
+        fileStore.__objects = {}
+        fileStore.reload()
+        self.assertEqual(fileStore.all()["BaseModel." + new_instance.id], new_instance)
+        
