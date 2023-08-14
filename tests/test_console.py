@@ -142,6 +142,10 @@ class TestConsole(unittest.TestCase):
             self.typing.onecmd("update User 12345")
             self.assertEqual("** no instance found **\n",
                              fake_output.getvalue())
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            self.typing.onecmd("User.update(12345)")
+            self.assertEqual("** no instance found **\n",
+                             fake_output.getvalue())
 
     def test_show(self):
         """Test cmd output: show"""

@@ -104,5 +104,6 @@ class TestFileStorage(unittest.TestCase):
         fileStore.new(new_instance)
         fileStore.__objects = {}
         fileStore.reload()
-        self.assertEqual(fileStore.all()["BaseModel." + new_instance.id], new_instance)
-        
+        self.assertEqual(fileStore.all()["BaseModel." +
+                                         new_instance.id],
+                         new_instance)

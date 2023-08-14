@@ -156,7 +156,6 @@ class HBNBCommand(cmd.Cmd):
          by adding or updating attribute and saves
          the changes into the JSON file.
         """
-        print("match", line)
         args = []
         class_name = ""
         class_id = ""
@@ -170,12 +169,9 @@ class HBNBCommand(cmd.Cmd):
             key = f"{class_name}.{class_id}"
             try:
                 dict_str = match.group(2).replace("'", '"')
-                print("match", dict_str)
                 dict_arg = json.loads(dict_str)
-                print("match",dict_arg)
                 args.append(dict_arg)
             except json.decoder.JSONDecodeError:
-                print("except", args)
                 args.append("")
         else:
             args = shlex.split(line)
