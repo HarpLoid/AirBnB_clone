@@ -157,6 +157,8 @@ class HBNBCommand(cmd.Cmd):
          the changes into the JSON file.
         """
         args = []
+        class_name = ""
+        class_id = ""
         pattern = r'(.*)(\{[^\}]*\})'
         match = re.match(pattern, line)
         if match:
@@ -171,14 +173,18 @@ class HBNBCommand(cmd.Cmd):
                 args.append("")
         else:
             args = shlex.split(line)
-            class_name = args[0]
-            class_id = args[1].strip('"')
-            key = f"{class_name}.{class_id}"
+            try:
+                class_name = args[0]
+                class_id = args[1].strip('"')
+                key = f"{class_name}.{class_id}"
+            except IndexError:
+                pass
 
         if len(args) >= 4:
             if class_name in self.__class_dict:
                 if hasattr(self.__class_dict[class_name], args[2]):
-                    cast = type(getattr(self.__class_dict[class_name], args[2]))
+                    cast = type(getattr(self.__class_dict[class_name],
+                                        args[2]))
                     attrib_value = cast(args[3])
                     try:
                         setattr(storage.all()[key], args[2], attrib_value)
