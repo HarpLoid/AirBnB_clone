@@ -1,15 +1,4 @@
-.place
-{
-    text-align: center;
-}
-
-.place h1
-{
-    text-align: left;
-    font-size: 30px;
-}
-
-article
+.places article
 {
     width: 390px;
     padding: 20px;
@@ -19,8 +8,20 @@ article
     display: inline-block;
 }
 
-article h2
+.places h1
+{
+    text-align: left;
+    font-size: 30px;
+    width: 100%;
+}
+
+.places h2
 {
     font-size: 30px;
+    text-align: center;
+}
+
+.places
+{
     text-align: center;
 }
